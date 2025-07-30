@@ -69,17 +69,47 @@ class NostalgiaForInfinityX6(IStrategy):
   INTERFACE_VERSION = 3
 
   def version(self) -> str:
-    return "v16.5.297"
+    return "v16.5.297-enhanced"
 
-  stoploss = -0.99
+  def custom_stoploss(self, pair: str, trade: 'Trade', current_time: datetime,
+                     current_rate: float, current_profit: float, **kwargs) -> float:
+    """
+    Enhanced dynamic stoploss based on volatility and market conditions
+    """
+    dataframe, _ = self.dp.get_analyzed_dataframe(pair, self.timeframe)
+    if len(dataframe) < 1:
+      return self.stoploss
+      
+    last_candle = dataframe.iloc[-1].squeeze()
+    
+    atr = last_candle.get('ATR_14', 0.02)
+    volatility_multiplier = 2.0
+    
+    atr_stoploss = -(atr * volatility_multiplier)
+    
+    trade_duration = (current_time - trade.open_date_utc).total_seconds() / 3600
+    
+    if trade_duration < 1:  # First hour - tighter stop
+      dynamic_stoploss = max(atr_stoploss, -0.03)
+    elif trade_duration < 6:  # First 6 hours
+      dynamic_stoploss = max(atr_stoploss, -0.05)
+    else:  # After 6 hours - wider stop
+      dynamic_stoploss = max(atr_stoploss, -0.08)
+    
+    if current_profit > 0.02:  # If in profit > 2%
+      dynamic_stoploss = max(dynamic_stoploss, -0.01)  # Tighter trailing
+    
+    return max(dynamic_stoploss, -0.15)  # Never worse than -15%
+
+  stoploss = -0.15
 
   # Trailing stoploss (not used)
-  trailing_stop = False
+  trailing_stop = True
   trailing_only_offset_is_reached = True
   trailing_stop_positive = 0.01
   trailing_stop_positive_offset = 0.03
 
-  use_custom_stoploss = False
+  use_custom_stoploss = True
 
   # Optimal timeframe for the strategy.
   timeframe = "5m"

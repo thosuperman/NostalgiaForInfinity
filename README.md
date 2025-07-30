@@ -2,6 +2,14 @@
 
 Trading strategy for the [Freqtrade](https://www.freqtrade.io) crypto bot. For backtesting results, check out the comments in the individual [commit](https://github.com/iterativv/NostalgiaForInfinity/commits/main) page.
 
+## 🚀 Enhanced Versions Available
+
+This repository now includes enhanced versions of the strategy optimized for post-2024 market conditions:
+
+- **NostalgiaForInfinityX6**: Enhanced with advanced risk management, modern indicators, and performance optimizations
+
+See [IMPROVEMENTS.md](IMPROVEMENTS.md) for detailed information about the enhancements.
+
 
 
 # Quick Start

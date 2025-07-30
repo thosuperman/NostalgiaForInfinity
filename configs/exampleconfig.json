@@ -13,6 +13,9 @@
   "force_entry_enable": true,
   "initial_state": "running",
   "timeframe": "5m",
+  // Enhanced risk management settings
+  "position_adjustment_enable": true,
+  "max_entry_position_adjustment": 3,
   "unfilledtimeout": {
     "entry": 3,
     "exit": 2,
